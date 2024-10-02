@@ -38,20 +38,47 @@ public class Philosopher extends Thread {
                     case 0:
                         myLeftStick.take();
                         think(); // pour augmenter la probabilité d'interblocage
-                       if (delai==1000){
-                           myLeftStick.release();
-                           break;
-                       }
-                        myRightStick.take();
-                        break;
+                        if(myRightStick.take()){
+
+                            eat();
+                            myLeftStick.release();
+                            myRightStick.release();
+                        }
+                       else {
+                            wait (delai);
+                            if( myRightStick.take()){
+                                eat();
+                                myLeftStick.release();
+                                myRightStick.release();
+                            }
+
+                            else{
+                                myLeftStick.release();
+
+                            }
+
+                        }
+
+
+
+
                     case 1:
                         myRightStick.take();
                         think(); // pour augmenter la probabilité d'interblocage
-                        if (delai==1000){
-                            myRightStick.release();
-                            break;
-                        }
-                        myLeftStick.take();
+                       if(myLeftStick.take()){
+                           eat();
+                           myLeftStick.release();
+                           myRightStick.release();
+                       }else {
+                           wait(delai);
+                           if(myLeftStick.take()){
+                               eat();
+                               myLeftStick.release();
+                               myRightStick.release();
+                           } else {
+                               myRightStick.release();
+                           }
+                       }
                 }
                 // Si on arrive ici, on a pu "take" les 2 baguettes
                 eat();
